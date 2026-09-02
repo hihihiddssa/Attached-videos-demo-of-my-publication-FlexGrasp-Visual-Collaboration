@@ -1,33 +1,86 @@
-# Research On Flexible Object Grasping Method Based on Visual Enhancement and Multi-Stage Collaboration
-# 基于视觉增强与多阶段协作的柔性物体抓取研究
+<div align="center">
 
-## 📌 项目简介 | Project Introduction
+# Research on Flexible Object Grasping
 
-**🇨🇳 中文** 本项目针对高反光、低纹理的柔性物体（如透明塑料袋）抓取难题，提出了一套结合 **视觉增强 (Visual Enhancement)** 与 **多阶段协作 (Multi-Stage Collaboration)** 的机器人抓取框架。通过“展开-抓取”的精准阶段转换，显著提升了服务机器人在复杂环境下的操作稳定性。
+### Visual Enhancement and Multi-Stage Collaboration
 
-**🇬🇧 English** This project addresses the challenge of grasping reflective, low-texture flexible objects (e.g., plastic bags) by proposing a framework that combines **Visual Enhancement** and **Multi-Stage Collaboration**. By enabling accurate "unfolding-grasping" transitions, it significantly improves the stability of service robots in complex scenarios.
+**A dual-arm robotic framework for unfolding and grasping reflective, low-texture flexible objects**
 
----
+[![Paper](https://img.shields.io/badge/Paper-ScienceDirect-ff6c00?logo=elsevier&logoColor=white)](https://doi.org/10.1016/j.procs.2025.10.104)
+[![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.procs.2025.10.104-blue)](https://doi.org/10.1016/j.procs.2025.10.104)
+[![Journal](https://img.shields.io/badge/Procedia_Computer_Science-2025-2b6cb0)](https://www.sciencedirect.com/science/article/pii/S1877050925034441)
+[![License](https://img.shields.io/badge/Paper-CC_BY--NC--ND_4.0-lightgrey)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
-## 🚀 核心亮点 | Key Contributions
+**[Read the paper](https://www.sciencedirect.com/science/article/pii/S1877050925034441)** · **[DOI](https://doi.org/10.1016/j.procs.2025.10.104)**
 
-| 模块 / Module | 描述 / Description |
-| :--- | :--- |
-| **多阶段协作框架**<br>Multi-Stage Collaboration | **CN:** 将任务分解为基于模仿学习的“展开阶段”和基于视觉伺服的“抓取阶段”。<br>**EN:** Decomposes the task into an imitation learning-based "Unfolding Stage" and a visual servoing-based "Grasping Stage". |
-| **视觉增强流水线**<br>Visual Enhancement Pipeline | **CN:** 通过高斯平滑、对比度调整和形态学处理，将边缘检测准确率提升至 **90%** 以上。<br>**EN:** Improves edge detection accuracy to over **90%** via Gaussian smoothing, contrast adjustment, and morphological processing. |
-| **精准转换机制**<br>Phase Transition | **CN:** 采用三级触发系统，实时监控机械臂关节数据，确保各阶段无缝衔接。<br>**EN:** Adopts a three-level trigger system monitoring joint data in real-time to ensure seamless transitions. |
-| **性能提升**<br>Performance Boost | **CN:** 实验证明，本框架的抓取成功率达到 **83%**，较传统方法提升了 **35%**。<br>**EN:** Experiments show a grasping success rate of **83%**, a **35%** improvement over traditional methods. |
+</div>
 
 ---
 
-## 🎥 演示视频 | Demo Video
+## Overview | 项目简介
 
-> **Note:** 以下视频展示了从展开到抓取的完整流程及算法的鲁棒性测试。
-> The following videos demonstrate the full process from unfolding to grasping and robustness tests.
+This work addresses the manipulation of reflective, transparent, and low-texture flexible objects such as plastic bags. The system combines a **Transformer-based behavioral cloning policy** for bag unfolding with **YOLOv8-based visual perception and 3D coordinate mapping** for grasping. A quantitative phase-transition mechanism connects the two stages and limits error accumulation.
 
-### 1. 阶段 1 与阶段 2 转换 (Phase Transition)
-**CN:** 展示了系统通过实时监测机械臂关节角度（高精度），在完成袋子展开后自动触发从“模仿学习”到“视觉伺服抓取”的平滑转换。  
-**EN:** Demonstrates the smooth transition from Stage 1 (imitation learning) to Stage 2 (visual servoing) triggered by real-time joint angle monitoring with high precision.
+本研究面向透明塑料袋等高反光、低纹理柔性物体的操作难题。系统在展开阶段采用**基于 Transformer 的行为克隆策略**，在抓取阶段结合 **YOLOv8 视觉检测与三维坐标映射**，并通过可量化的阶段转换机制衔接两个闭环，从而降低纯模仿学习在长任务中的累积误差。
+
+```text
+Camera observations + expert demonstrations
+                    │
+                    ▼
+     Stage 1: Transformer behavioral cloning
+           Bag opening and stretching
+                    │
+          Joint-state transition trigger
+                    │
+                    ▼
+       Stage 2: YOLOv8 + visual servoing
+       Detection → 2D-to-3D → grasp command
+```
+
+## What the Transformer Does | Transformer 的作用
+
+The Transformer is used in **Stage 1 (unfolding)** as the policy backbone of a behavioral cloning model. It is trained from expert demonstrations of plastic-bag unfolding and drives the robot arms through opening and stretching trajectories. Joint-encoder feedback helps maintain a stable initial pose. Once joint-angle variation remains below the calibrated threshold, the system pauses the imitation-learning policy and hands control to the vision-guided grasping stage.
+
+Transformer 被用于**第一阶段（展开）**，作为行为克隆策略的模型骨干。模型从塑料袋展开的专家示范数据中学习，驱动双臂执行开袋与拉伸轨迹，并结合关节编码器反馈保持稳定的初始姿态。当关节角变化持续低于标定阈值后，系统暂停模仿学习策略，将控制权交给视觉引导的抓取阶段。
+
+> **Scope note:** The paper specifies a Transformer-based behavioral cloning policy but does not report layer counts, attention-head counts, or a detailed encoder-decoder configuration. This repository therefore describes the model only at the level supported by the publication.
+
+## Key Contributions | 核心贡献
+
+| Component | Contribution |
+| --- | --- |
+| **Multi-stage collaboration** | Decomposes the task into imitation-learning-based unfolding and vision-servoed grasping, reducing long-horizon error accumulation. |
+| **Quantitative phase transition** | Uses 100 Hz joint-angle feedback and a three-level trigger to detect completion of unfolding and switch control modes. |
+| **Visual enhancement** | Applies brightness/contrast adjustment, Gaussian smoothing, Canny edge detection, and morphological closing to suppress glare and strengthen structural cues. |
+| **Detection and localization** | Uses YOLOv8 and calibrated 2D-to-3D coordinate mapping to generate grasp commands from the unfolded state. |
+
+## Experimental Results | 实验结果
+
+| Evaluation | Proposed method | Baseline | Improvement |
+| --- | ---: | ---: | ---: |
+| Full-task success rate | **83/100 (83%)** | Mobile ALOHA: 48/100 (48%) | **+35 percentage points** |
+| Success with image preprocessing | **83/100 (83%)** | Without preprocessing: 57/100 (57%) | **+26 percentage points** |
+
+The experiments show that separating unfolding from visually corrected grasping substantially improves task completion, while preprocessing strengthens robustness under glare and changing illumination.
+
+实验结果表明，将展开阶段与视觉校正抓取阶段分离能够显著提升任务完成率；视觉预处理则增强了系统在反光和光照变化条件下的稳定性。
+
+## System Setup | 系统配置
+
+| Component | Specification |
+| --- | --- |
+| Robot arms | 2 × DOBOT Nova5, 6-DOF |
+| Cameras | 4 × Intel RealSense D405 depth cameras |
+| End effectors | Custom 3D-printed dual-finger soft-rubber grippers |
+| Stage 1 policy | Transformer-based behavioral cloning |
+| Stage 2 perception | YOLOv8 detection and calibrated 2D-to-3D mapping |
+| Control | Position control → visual servo control |
+
+## Demo Videos | 演示视频
+
+### 1. Phase Transition | 阶段转换
+
+The system detects completion of bag unfolding from joint-state feedback and switches from imitation learning to visual servoing.
 
 https://github.com/user-attachments/assets/4603b509-eaeb-4aa5-a8ca-4bf48f7e3d74
 
@@ -35,55 +88,51 @@ https://github.com/user-attachments/assets/dd9c6639-5c8a-4a28-a563-27a95cc84f63
 
 https://github.com/user-attachments/assets/b4c0b1f5-3735-443a-9ce6-d556ef0892df
 
-### 2. 全流程演示 (Full Task: From Unfolding to Placement)
-**CN:** 演示了从双臂协作展开反光塑料袋到最终精准放入物品（如泰迪熊）的完整闭环控制过程。  
-**EN:** Illustrates the complete closed-loop control from dual-arm unfolding of reflective bags to the precise placement of objects (e.g., a teddy bear).
+### 2. Full Task: Unfolding to Placement | 完整任务流程
+
+Dual-arm collaborative unfolding followed by vision-guided placement of an object into the bag.
 
 https://github.com/user-attachments/assets/84d46608-2374-4f60-b5bf-87ac89c7346e
 
-### 3. 多样化颜色适配 (Color Generalization)
-**CN:** 验证了视觉增强算法对不同颜色、高反光柔性物体的稳健性，通过参数优化显著抑制了光影干扰。  
-**EN:** Validates the robustness of visual enhancement algorithms across different colors and highly reflective flexible objects by suppressing lighting interference.
+### 3. Color and Illumination Generalization | 颜色与光照泛化
+
+Robustness tests across flexible objects with different colors and reflective appearances.
 
 https://github.com/user-attachments/assets/7d8bd20f-4a2c-40ec-834e-5635cf33dba4
 
 https://github.com/user-attachments/assets/3c84b179-5823-441b-bf56-33200c4242fa
 
-### 4. 通用性测试：刚性物体抓取 (Generalization: Rigid Object)
-**CN:** 证明了该框架在处理非结构化柔性物体的同时，同样具备对普通刚性物体的稳定抓取能力。  
-**EN:** Demonstrates that the framework maintains stable grasping capabilities for rigid objects while excelling at unstructured flexible object manipulation.
+### 4. Rigid-Object Generalization | 刚性物体泛化
 
 https://github.com/user-attachments/assets/134cfb46-261f-4229-b06f-ba3fa7a28b49
 
-### 5. 数据采集过程 (Data Collection & Training)
-**CN:** 展示了用于训练 Transformer 行为克隆模型的专家演示数据采集过程，为模仿学习提供高质量输入。  
-**EN:** Shows the expert demonstration data collection process used to train the Transformer-based behavioral cloning model.
+### 5. Expert Demonstration Collection | 专家示范采集
+
+Collection of high-quality demonstrations used to train the Transformer-based behavioral cloning policy.
 
 https://github.com/user-attachments/assets/c1db5af7-147a-4636-ae44-fd71ac63577b
 
----
+## Publication | 论文信息
 
-## 🛠️ 系统构成 | System Setup
+**Cila Aga, Zhijun Cao, Junchen Chi, Jin Liu, Chaoqun Wang, Tianyu Fu, and Rui Song.**<br>
+“Research On Flexible Object Grasping Method Based on Visual Enhancement and Multi-Stage Collaboration.”<br>
+*Procedia Computer Science*, Volume 271, 2025, Pages 7-13.<br>
+[ScienceDirect](https://www.sciencedirect.com/science/article/pii/S1877050925034441) · [DOI: 10.1016/j.procs.2025.10.104](https://doi.org/10.1016/j.procs.2025.10.104)
 
-| 组件 / Component | 规格 / Specification |
-| :--- | :--- |
-| **机械臂** (Robots) | 2 × DOBOT Nova5 (6-DOF) |
-| **传感器** (Sensors) | 4 × Intel RealSense D405 Depth Cameras |
-| **末端执行器** (Gripper) | Custom 3D-printed dual-finger soft gripper (3D 打印双指软胶抓取手) |
-| **控制算法** (Algorithms)| Transformer-based Behavioral Cloning & YOLO v8 |
-
----
-
-## 📖 引用 | Citation
-
-If you find this work helpful, please consider citing:
+## Citation
 
 ```bibtex
-@article{aga2025research,
-  title={Research On Flexible Object Grasping Method Based on Visual Enhancement and Multi-Stage Collaboration},
-  author={Aga, Cila and Cao, Zhijun and Chi, Junchen and Liu, Jin and Wang, Chaoqun and Fu, Tianyu and Song, Rui},
-  journal={Procedia Computer Science},
-  volume={271},
-  pages={7--13},
-  year={2025}
+@article{aga2025flexible,
+  title   = {Research On Flexible Object Grasping Method Based on Visual Enhancement and Multi-Stage Collaboration},
+  author  = {Aga, Cila and Cao, Zhijun and Chi, Junchen and Liu, Jin and Wang, Chaoqun and Fu, Tianyu and Song, Rui},
+  journal = {Procedia Computer Science},
+  volume  = {271},
+  pages   = {7--13},
+  year    = {2025},
+  doi     = {10.1016/j.procs.2025.10.104}
 }
+```
+
+## License
+
+The published article is available under the [CC BY-NC-ND 4.0 license](https://creativecommons.org/licenses/by-nc-nd/4.0/). The videos in this repository remain subject to their respective ownership and usage terms.
