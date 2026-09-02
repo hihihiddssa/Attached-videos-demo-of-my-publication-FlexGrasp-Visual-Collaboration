@@ -19,9 +19,9 @@
 
 ## Overview | 项目简介
 
-This work addresses the manipulation of reflective, transparent, and low-texture flexible objects such as plastic bags. The system combines a **Transformer-based behavioral cloning policy** for bag unfolding with **YOLOv8-based visual perception and 3D coordinate mapping** for grasping. A quantitative phase-transition mechanism connects the two stages and limits error accumulation.
+This project explores dual-arm robotic manipulation of flexible objects such as plastic bags. It combines **Transformer-based imitation learning**, computer vision, and visual servoing in an unfolding-to-grasping workflow.
 
-本研究面向透明塑料袋等高反光、低纹理柔性物体的操作难题。系统在展开阶段采用**基于 Transformer 的行为克隆策略**，在抓取阶段结合 **YOLOv8 视觉检测与三维坐标映射**，并通过可量化的阶段转换机制衔接两个闭环，从而降低纯模仿学习在长任务中的累积误差。
+本项目探索双机械臂对塑料袋等柔性物体的操作，将**基于 Transformer 的模仿学习**、计算机视觉与视觉伺服结合到“展开-抓取”流程中。
 
 ```text
 Camera observations + expert demonstrations
@@ -37,33 +37,18 @@ Camera observations + expert demonstrations
        Detection → 2D-to-3D → grasp command
 ```
 
-## What the Transformer Does | Transformer 的作用
+## AI Highlight | AI 技术亮点
 
-The Transformer is used in **Stage 1 (unfolding)** as the policy backbone of a behavioral cloning model. It is trained from expert demonstrations of plastic-bag unfolding and drives the robot arms through opening and stretching trajectories. Joint-encoder feedback helps maintain a stable initial pose. Once joint-angle variation remains below the calibrated threshold, the system pauses the imitation-learning policy and hands control to the vision-guided grasping stage.
+> Built a **Transformer-based behavioral cloning policy** from expert demonstrations to learn dual-arm bag-opening and stretching trajectories.
 
-Transformer 被用于**第一阶段（展开）**，作为行为克隆策略的模型骨干。模型从塑料袋展开的专家示范数据中学习，驱动双臂执行开袋与拉伸轨迹，并结合关节编码器反馈保持稳定的初始姿态。当关节角变化持续低于标定阈值后，系统暂停模仿学习策略，将控制权交给视觉引导的抓取阶段。
+> 基于专家示范训练 **Transformer 行为克隆策略**，学习双机械臂的开袋与拉伸轨迹。
 
-> **Scope note:** The paper specifies a Transformer-based behavioral cloning policy but does not report layer counts, attention-head counts, or a detailed encoder-decoder configuration. This repository therefore describes the model only at the level supported by the publication.
+## Highlights | 项目亮点
 
-## Key Contributions | 核心贡献
-
-| Component | Contribution |
-| --- | --- |
-| **Multi-stage collaboration** | Decomposes the task into imitation-learning-based unfolding and vision-servoed grasping, reducing long-horizon error accumulation. |
-| **Quantitative phase transition** | Uses 100 Hz joint-angle feedback and a three-level trigger to detect completion of unfolding and switch control modes. |
-| **Visual enhancement** | Applies brightness/contrast adjustment, Gaussian smoothing, Canny edge detection, and morphological closing to suppress glare and strengthen structural cues. |
-| **Detection and localization** | Uses YOLOv8 and calibrated 2D-to-3D coordinate mapping to generate grasp commands from the unfolded state. |
-
-## Experimental Results | 实验结果
-
-| Evaluation | Proposed method | Baseline | Improvement |
-| --- | ---: | ---: | ---: |
-| Full-task success rate | **83/100 (83%)** | Mobile ALOHA: 48/100 (48%) | **+35 percentage points** |
-| Success with image preprocessing | **83/100 (83%)** | Without preprocessing: 57/100 (57%) | **+26 percentage points** |
-
-The experiments show that separating unfolding from visually corrected grasping substantially improves task completion, while preprocessing strengthens robustness under glare and changing illumination.
-
-实验结果表明，将展开阶段与视觉校正抓取阶段分离能够显著提升任务完成率；视觉预处理则增强了系统在反光和光照变化条件下的稳定性。
+- Transformer-based imitation learning for dual-arm manipulation
+- YOLOv8 perception and calibrated 2D-to-3D grasp localization
+- Visual enhancement for reflective and low-texture objects
+- Multi-stage coordination between learned motion and visual servoing
 
 ## System Setup | 系统配置
 
